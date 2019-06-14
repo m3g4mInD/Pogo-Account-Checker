@@ -322,7 +322,7 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
                     closeNotificationOpenPlayerProfile();
                     break;
                 case SUSPENSION_WARNING:
-                    mPogoInteractor.closeSuspensionsWarning();
+                    mPogoInteractor.closeSuspensionWarning();
                     if (isInterrupted()) return false;
                     Utils.sleep(Integer.parseInt(mSharedPreferences.getString(getString(R.string.cheating_warning_delay_pref_key), "500")));
                     if (isInterrupted()) return false;
@@ -504,7 +504,11 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
 
                                 if (getOnPlayerProfile()) {
                                     int level = mPogoInteractor.getAccountLevel();
-                                    processNotBannedLevelAccount(account, username, level);
+                                    if (level == -1) {
+                                        processBannedAccount(account, username);
+                                    } else {
+                                        processNotBannedLevelAccount(account, username, level);
+                                    }
                                     return AccountStatus.NOT_BANNED;
                                 } else if (isInterrupted()) continue;
                             } else {
